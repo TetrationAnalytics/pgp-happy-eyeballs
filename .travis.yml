@@ -18,4 +18,15 @@ script:
         docker rm -vf test
 
         ./hack-my-builds.sh
+
+        docker run --rm tianon/network-toolbox:alpine sh -xec '
+            dig dl-cdn.alpinelinux.org | grep build-cache.travisci.net
+            grep dl-cdn.alpinelinux.org /etc/apk/repositories
+            apk update # should hit dl-cdn.alpinelinux.org via build-cache
+        '
       )
+
+after_script:
+    - docker images
+    - docker logs pgp-happy-eyeballs
+    - docker logs rawdns
